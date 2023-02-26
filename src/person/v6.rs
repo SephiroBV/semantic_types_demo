@@ -64,6 +64,15 @@ mod tests {
         assert!(Name::new(inner).is_err())
     }
 
+    #[test_case("Sherlock", "Sherlock"     ; "when string has no leading or trailing spaces")]
+    #[test_case(" Sherlock", "Sherlock"    ; "when string has leading spaces")]
+    #[test_case("Sherlock ", "Sherlock"   ; "when string has trailing spaces")]
+    #[test_case(" Sherlock ", "Sherlock"   ; "when string has leading and trailing spaces")]
+    #[test_case(" Sher lock ", "Sher lock" ; "when string has leading and trailing spaces and spaces in middle of name")]
+    fn trim_name(input: &str, output: &str) {
+        assert_eq!(output, Name::new(input).unwrap().to_string());
+    }
+
     #[test]
     fn display() {
         let sherlock = Person {
@@ -78,3 +87,6 @@ mod tests {
 // Ok, so we shaved some lines off the code, nice!
 // But this example is just the beginning. There are all sort of
 // domain specific functions you can implement on your semantic types!
+
+// You can extend this example yourself! For example, what does Name mean exactly?
+// Is it someone's first name or last name or full name? We can be more explicit

@@ -108,6 +108,11 @@ mod tests {
     }
 
     #[test]
+    fn trim_name() {
+        assert_eq!("Sherlock", Name::new(" Sherlock ").unwrap().to_string())
+    }
+
+    #[test]
     fn display() {
         let sherlock = Person {
             name: Name::new("Sherlock").unwrap(),

@@ -2,7 +2,7 @@
 pub struct Person {
     name: String,
     age: u8,
-    weight: u8,
+    weight: u16,
 }
 
 impl std::fmt::Display for Person {

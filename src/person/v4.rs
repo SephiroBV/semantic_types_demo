@@ -51,16 +51,13 @@ mod name {
 
     fn trim_in_place(value: &mut String) {
         let trimmed = value.trim();
-        if trimmed.len() < value.len() {
-            let len = trimmed.len();
-            unsafe {
-                core::ptr::copy(
-                    trimmed.as_ptr(),
-                    value.as_bytes_mut().as_mut_ptr(), // no str::as_mut_ptr() in std ...
-                    len,
-                );
+        let trim_len  = trimmed.len();
+        if trim_len < value.len() {
+            let trim_start= trimmed.as_ptr() as usize - value.as_ptr() as usize;
+            if trim_start !=0 {
+                value.drain(..trim_start);
             }
-            value.truncate(len)
+            value.truncate(trim_len);
         }
     }
 
@@ -123,6 +120,11 @@ mod tests {
     #[test]
     fn blank_name() {
         assert!(Name::new("  ").is_err())
+    }
+
+    #[test]
+    fn trim_name() {
+        assert_eq!("Sherlock", Name::new(" Sherlock ").unwrap().to_string())
     }
 
     #[test]

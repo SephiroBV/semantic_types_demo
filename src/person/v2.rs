@@ -1,13 +1,13 @@
 #[derive(Clone, Debug)]
 pub struct Person {
-    name: String,
+    first_name: String,
     age_in_years: u8,
-    weight_in_kg: u8,
+    weight_in_kg: u16,
 }
 
 impl std::fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Name: {}, Age: {} years, Weight: {}kg", self.name, self.age_in_years, self.weight_in_kg)
+        write!(f, "Name: {}, Age: {} years, Weight: {}kg", self.first_name, self.age_in_years, self.weight_in_kg)
     }
 }
 
@@ -18,7 +18,7 @@ mod tests {
     #[test]
     fn display() {
         let sherlock = Person {
-            name: "Sherlock".to_string(),
+            first_name: "Sherlock".to_string(),
             age_in_years: 60,
             weight_in_kg: 90,
         };
