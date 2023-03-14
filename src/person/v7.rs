@@ -1,6 +1,4 @@
-pub use kilos::Kilograms;
 pub use name::{BlankNameError, Name};
-pub use years::Years;
 
 #[derive(Clone, Debug, derive_more::Display)]
 #[display(fmt = "Name: {}, Age: {}, Weight: {}", name, age, weight)]
@@ -13,12 +11,14 @@ pub struct Person {
 mod name {
     use crate::extensions::str_ext::{StrExt, StringExt};
 
-    #[derive(Copy, Clone, Debug, thiserror::Error, derive_more::Display)]
-    #[display(fmt = "A name cannot be blank")]
-    pub struct BlankNameError;
-
     #[derive(Clone, Debug, derive_more::Display)]
     pub struct Name(String);
+
+    impl Name {
+        pub fn new(value: impl Into<String>) -> Result<Self, BlankNameError> {
+            value.into().try_into()
+        }
+    }
 
     impl TryFrom<String> for Name {
         type Error = BlankNameError;
@@ -32,26 +32,18 @@ mod name {
         }
     }
 
-    impl Name {
-        pub fn new(value: impl Into<String>) -> Result<Self, BlankNameError> {
-            value.into().try_into()
-        }
-    }
+    #[derive(Copy, Clone, Debug, thiserror::Error, derive_more::Display)]
+    #[display(fmt = "A name cannot be blank")]
+    pub struct BlankNameError;
 }
 
-mod years {
+#[derive(Copy, Clone, Debug, derive_more::Display, derive_more::Constructor)]
+#[display(fmt = "{} years", _0)]
+pub struct Years(u8);
 
-    #[derive(Copy, Clone, Debug, derive_more::Display, derive_more::Constructor)]
-    #[display(fmt = "{} years", _0)]
-    pub struct Years(u8);
-}
-
-mod kilos {
-
-    #[derive(Copy, Clone, Debug, derive_more::Display, derive_more::Constructor)]
-    #[display(fmt = "{}kg", _0)]
-    pub struct Kilograms(u16);
-}
+#[derive(Copy, Clone, Debug, derive_more::Display, derive_more::Constructor)]
+#[display(fmt = "{}kg", _0)]
+pub struct Kilograms(u16);
 
 #[cfg(test)]
 mod tests {

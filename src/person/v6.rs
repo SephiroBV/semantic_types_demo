@@ -22,19 +22,20 @@ impl std::fmt::Display for Person {
 mod name {
     use crate::extensions::str_ext::{StrExt, StringExt};
 
-    #[derive(Copy, Clone, Debug)]
-    pub struct BlankNameError;
+    #[derive(Clone, Debug)]
+    pub struct Name(String);
 
-    impl std::fmt::Display for BlankNameError {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "A name cannot be blank")
+    impl Name {
+        pub fn new(value: impl Into<String>) -> Result<Self, BlankNameError> {
+            value.into().try_into()
         }
     }
 
-    impl std::error::Error for BlankNameError {}
-
-    #[derive(Clone, Debug)]
-    pub struct Name(String);
+    impl std::fmt::Display for Name {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{}", self.0)
+        }
+    }
 
     impl TryFrom<String> for Name {
         type Error = BlankNameError;
@@ -48,15 +49,14 @@ mod name {
         }
     }
 
-    impl Name {
-        pub fn new(value: impl Into<String>) -> Result<Self, BlankNameError> {
-            value.into().try_into()
-        }
-    }
+    #[derive(Copy, Clone, Debug)]
+    pub struct BlankNameError;
 
-    impl std::fmt::Display for Name {
+    impl std::error::Error for BlankNameError {}
+
+    impl std::fmt::Display for BlankNameError {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}", self.0)
+            write!(f, "A name cannot be blank")
         }
     }
 }
