@@ -1,5 +1,5 @@
 pub use kilos::Kilograms;
-pub use name::{Name, BlankNameError};
+pub use name::Name;
 pub use years::Years;
 
 #[derive(Clone, Debug)]
@@ -11,13 +11,15 @@ pub struct Person {
 
 impl std::fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Name: {}, Age: {}, Weight: {}", self.name, self.age, self.weight)
+        write!(
+            f,
+            "Name: {}, Age: {}, Weight: {}",
+            self.name, self.age, self.weight
+        )
     }
 }
 
 mod name {
-    use crate::extensions::str_ext::{StrExt, StringExt};
-
     #[derive(Copy, Clone, Debug)]
     pub struct BlankNameError;
 
@@ -35,12 +37,31 @@ mod name {
     impl TryFrom<String> for Name {
         type Error = BlankNameError;
 
-        fn try_from(value: String) -> Result<Self, Self::Error> {
-            if value.is_not_blank() {
-                Ok(Name(value.trim_in_place()))
+        fn try_from(mut value: String) -> Result<Self, Self::Error> {
+            if is_not_blank(&value) {
+                // let's trim any extra leading or trailing white spaces if required
+                trim_in_place(&mut value);
+                Ok(Name(value))
             } else {
+                // If input is blank, return an error
                 Err(BlankNameError)
             }
+        }
+    }
+
+    fn is_not_blank(value: &str) -> bool {
+        !value.trim().is_empty()
+    }
+
+    fn trim_in_place(value: &mut String) {
+        let trimmed = value.trim();
+        let trim_len = trimmed.len();
+        if trim_len < value.len() {
+            let trim_start = trimmed.as_ptr() as usize - value.as_ptr() as usize;
+            if trim_start != 0 {
+                value.drain(..trim_start);
+            }
+            value.truncate(trim_len);
         }
     }
 
@@ -58,7 +79,6 @@ mod name {
 }
 
 mod years {
-
     #[derive(Copy, Clone, Debug)]
     pub struct Years(u8);
 
@@ -76,7 +96,6 @@ mod years {
 }
 
 mod kilos {
-
     #[derive(Copy, Clone, Debug)]
     pub struct Kilograms(u16);
 
@@ -119,14 +138,16 @@ mod tests {
             age: Years::new(60),
             weight: Kilograms::new(90),
         };
-        println!("{sherlock}");
+        assert_eq!(
+            "Name: Sherlock, Age: 60 years, Weight: 90kg",
+            sherlock.to_string()
+        )
     }
 }
 
-// Ok, so we've moved the code to a common str_ext.rs module.
-// Now everybody working on this codebase can leverage these utility functions
-// by importing them into scope. And as long as we make sure to keep the functions
-// generic it's a net positive!
-// ...but wow, we've written a lot of code just to be able to create a Person struct with
-// 3 fields and print it out. Ok! let's clean it up a bit and replace some boilerplate with macros
-// I'm too lazy to write them all myself so let's use some community crates.
+// Ok, we've solved the blank name problem!
+// Don't believe me? Check the tests above.
+// But something seems a little out of place.
+// Those string helper functions we added, they seem pretty useful.
+// We should probably make them readily available to the rest of our codebase
+// Let's not leave them buried in some random module

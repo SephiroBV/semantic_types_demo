@@ -7,7 +7,11 @@ pub struct Person {
 
 impl std::fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Name: {}, Age: {} years, Weight: {}kg", self.name, self.age_in_years, self.weight_in_kg)
+        write!(
+            f,
+            "Name: {}, Age: {} years, Weight: {}kg",
+            self.name, self.age_in_years, self.weight_in_kg
+        )
     }
 }
 
@@ -22,7 +26,10 @@ mod tests {
             age_in_years: 60,
             weight_in_kg: 90,
         };
-        println!("{sherlock}");
+        assert_eq!(
+            "Name: Sherlock, Age: 60 years, Weight: 90kg",
+            sherlock.to_string()
+        )
     }
 }
 
