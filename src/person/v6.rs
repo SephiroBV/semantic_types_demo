@@ -20,8 +20,6 @@ impl std::fmt::Display for Person {
 }
 
 mod name {
-    use crate::extensions::str_ext::{StrExt, StringExt};
-
     #[derive(Clone, Debug)]
     pub struct Name(String);
 
@@ -41,6 +39,8 @@ mod name {
         type Error = BlankNameError;
 
         fn try_from(value: String) -> Result<Self, Self::Error> {
+            use crate::extensions::str_ext::{StrExt, StringExt};
+
             if value.is_not_blank() {
                 Ok(Name(value.trim_in_place()))
             } else {

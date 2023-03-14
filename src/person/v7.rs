@@ -9,8 +9,6 @@ pub struct Person {
 }
 
 mod name {
-    use crate::extensions::str_ext::{StrExt, StringExt};
-
     #[derive(Clone, Debug, derive_more::Display)]
     pub struct Name(String);
 
@@ -24,6 +22,8 @@ mod name {
         type Error = BlankNameError;
 
         fn try_from(value: String) -> Result<Self, Self::Error> {
+            use crate::extensions::str_ext::{StrExt, StringExt};
+
             value
                 .is_not_blank()
                 .then(|| value.trim_in_place())
