@@ -1,5 +1,5 @@
 pub use kilos::Kilograms;
-pub use name::Name;
+pub use name::{BlankNameError, Name};
 pub use years::Years;
 
 #[derive(Clone, Debug)]
@@ -38,47 +38,31 @@ mod name {
     impl TryFrom<String> for Name {
         type Error = BlankNameError;
 
-        fn try_from(mut value: String) -> Result<Self, Self::Error> {
-            if is_not_blank(&value) {
-                // let's trim any extra leading or trailing white spaces if required
-                trim_in_place(&mut value);
-                Ok(Name(value))
+        fn try_from(value: String) -> Result<Self, Self::Error> {
+            use crate::extensions::str_ext::{StrExt, StringExt};
+
+            if value.is_not_blank() {
+                Ok(Name(value.trim_in_place()))
             } else {
-                // If input is blank, return an error
                 Err(BlankNameError)
             }
-        }
-    }
-
-    fn is_not_blank(value: &str) -> bool {
-        !value.trim().is_empty()
-    }
-
-    fn trim_in_place(value: &mut String) {
-        let trimmed = value.trim();
-        let trim_len = trimmed.len();
-        if trim_len < value.len() {
-            let trim_start = trimmed.as_ptr() as usize - value.as_ptr() as usize;
-            if trim_start != 0 {
-                value.drain(..trim_start);
-            }
-            value.truncate(trim_len);
         }
     }
 
     #[derive(Copy, Clone, Debug)]
     pub struct BlankNameError;
 
+    impl std::error::Error for BlankNameError {}
+
     impl std::fmt::Display for BlankNameError {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             write!(f, "A name cannot be blank")
         }
     }
-
-    impl std::error::Error for BlankNameError {}
 }
 
 mod years {
+
     #[derive(Copy, Clone, Debug)]
     pub struct Years(u8);
 
@@ -96,6 +80,7 @@ mod years {
 }
 
 mod kilos {
+
     #[derive(Copy, Clone, Debug)]
     pub struct Kilograms(u16);
 
@@ -145,9 +130,11 @@ mod tests {
     }
 }
 
-// Ok, we've solved the blank name problem!
-// Don't believe me? Check the tests above.
-// But something seems a little out of place.
-// Those string helper functions we added, they seem pretty useful.
-// We should probably make them readily available to the rest of our codebase
-// Let's not leave them buried in some random module
+// Ok, so we've moved the code to a common str_ext.rs module.
+// Now everybody working on this codebase can leverage these utility functions
+// by importing them into scope. And as long as we make sure to keep the functions
+// generic it's a net positive!
+//
+// ...but wow, we've written a lot of code just to be able to create a Person struct with
+// 3 fields. Ok! let's clean it up a bit and replace some boilerplate with macros
+// I'm too lazy to write them all myself so let's use some community crates.

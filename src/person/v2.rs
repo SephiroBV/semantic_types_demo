@@ -1,8 +1,11 @@
+type Kilograms = u16;
+type Years = u8;
+
 #[derive(Clone, Debug)]
 pub struct Person {
     name: String,
-    age_in_years: u8,
-    weight_in_kg: u16,
+    age: Years,
+    weight: Kilograms,
 }
 
 impl std::fmt::Display for Person {
@@ -10,7 +13,7 @@ impl std::fmt::Display for Person {
         write!(
             f,
             "Name: {}, Age: {} years, Weight: {}kg",
-            self.name, self.age_in_years, self.weight_in_kg
+            self.name, self.age, self.weight
         )
     }
 }
@@ -23,8 +26,8 @@ mod tests {
     fn display() {
         let sherlock = Person {
             name: "Sherlock".to_string(),
-            age_in_years: 60,
-            weight_in_kg: 90,
+            age: 60,
+            weight: 90,
         };
         assert_eq!(
             "Name: Sherlock, Age: 60 years, Weight: 90kg",
@@ -33,5 +36,7 @@ mod tests {
     }
 }
 
-// Better, our code now explicitly states the unit of measurement.
-// But name all our variables *_in_* will get tiresome. Can we do better?
+// Type aliases!
+// We can use them to refer to primitives and other generic data types with domain specific naming
+// This makes the code more readable, but lacks stronger guarantees on correctness.
+// Let's go further
