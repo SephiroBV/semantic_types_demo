@@ -12,7 +12,7 @@ impl std::fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Name: {}, Age: {} years, Weight: {}kg",
+            "Name: {}, Age: {}, Weight: {}",
             self.name, self.age, self.weight
         )
     }
@@ -29,10 +29,7 @@ mod tests {
             age: 60,
             weight: 90,
         };
-        assert_eq!(
-            "Name: Sherlock, Age: 60 years, Weight: 90kg",
-            sherlock.to_string()
-        )
+        assert_eq!("Name: Sherlock, Age: 60, Weight: 90", sherlock.to_string())
     }
 }
 
